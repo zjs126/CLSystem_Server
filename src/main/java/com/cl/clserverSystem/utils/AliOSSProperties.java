@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AliOSSProperties {
     private String endpoint="http://oss-cn-beijing.aliyuncs.com";
-    private String accessKeyId="LTAI5tDaWaG139ab7pVtkWtC";
-    private String accessKeySecret="3yKp5WmyMBLW3AcFCHje7rNPUa98Y4";
+    private String accessKeyId="xxx";
+    private String accessKeySecret="xxx";
     private String bucketName="cl-server-file";
 }
