@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/mybatis?characterEncoding=utf-8&serverTimezone=Asia/Shanghai
     username: root
-    password: 126310
+    password: xxxxxx
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
     multipart:
@@ -14,8 +14,8 @@ spring:
     host: smtp.qq.com
     protocol: smtp
     default-encoding: UTF-8
-    username: 2455831260@qq.com
-    password: smetlqmjkfnodiai
+    username: xxxx@qq.com
+    password: xxxx
     test-connection: true
     properties:
       mail:
@@ -27,5 +27,5 @@ spring:
 face:
   baidu:
     appid: 35688401
-    key: vAu9nQ3BdURn7jpOxmM4CCiK
-    secret: tV7ZR1uuDRiUL5nTLzktCQiERpW7H8av
+    key: xxx
+    secret: xxx
