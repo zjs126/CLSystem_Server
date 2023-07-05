@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cl.clserverSystem.mapper.ApplyMapper">
+
+
+    <insert id="add" parameterType="com.cl.clserverSystem.entity.Apply">
+        insert into apply(origin_place, target_place, start_time, end_time, reason, pre_fee, type, manager_id,
+                          apply_time)
+        values (#{origin_place}, #{target_place},
+                #{start_time}, #{end_time},
+                #{reason}, #{pre_fee}, #{type}, #{manager_id}, #{apply_time});
+    </insert>
+    <update id="update">
+        UPDATE apply
+        SET situation     = #{situation},
+            reject_reason = #{reject_reason}
+        WHERE apply_id = #{apply_id}
+
+    </update>
+    <update id="updateApply">
+        UPDATE apply
+        set origin_place = #{origin_place},
+            target_place = #{target_place},
+            start_time   = #{start_time},
+            end_time     = #{end_time},
+            reason       = #{reason},
+            pre_fee      = #{pre_fee},
+            manager_id   = #{manager_id},
+            apply_time   = #{apply_time}
+        where apply_id = #{apply_id}
+    </update>
+    <delete id="delete">
+        DELETE
+        FROM apply
+        WHERE apply_id = #{id}
+    </delete>
+
+
+    <select id="selectByApply" parameterType="com.cl.clserverSystem.entity.Apply" resultType="java.lang.Integer">
+        select Apply_id
+        from Apply
+        where origin_place = #{origin_place}
+          and target_place = #{target_place}
+          and reason = #{reason}
+          and pre_fee = #{pre_fee}
+          and manager_id = #{manager_id}
+          and start_time = #{start_time}
+          and end_time = #{end_time}
+    </select>
+
+    <select id="selectByManagerId" resultType="com.cl.clserverSystem.entity.Apply">
+        select *
+        from apply
+        where manager_id = #{id} and situation='0'
+    </select>
+
+    <!--    List<Apply> selectByApplyIds(int id);-->
+    <resultMap id="applys" type="com.cl.clserverSystem.entity.User">
+        <id property="user_id" column="user_id"></id>
+        <collection property="applyList" ofType="com.cl.clserverSystem.entity.Apply">
+            <id property="apply_id" column="apply_id"></id>
+            <result property="origin_place" column="origin_place"></result>
+            <result property="target_place" column="target_place"></result>
+            <result property="start_time" column="start_time"></result>
+            <result property="end_time" column="end_time"></result>
+            <result property="reason" column="reason"></result>
+            <result property="pre_fee" column="pre_fee"></result>
+            <result property="reject_reason" column="reject_reason"></result>
+            <result property="situation" column="situation"></result>
+            <result property="type" column="type"></result>
+            <result property="manager_id" column="manager_id"></result>
+            <result property="apply_time" column="apply_time"></result>
+        </collection>
+    </resultMap>
+
+    <select id="selectByUserId" resultMap="applys">
+        select user.user_id, apply.*
+        from user
+                 left join ua on user.user_id = ua.user_id
+                 left join apply on ua.apply_id = apply.apply_id
+        where user.user_id = #{id}
+    </select>
+<!--    List<Apply> ApplyUadited(int id);-->
+    <resultMap id="applyss" type="com.cl.clserverSystem.entity.User">
+        <id property="user_id" column="user_id"></id>
+        <collection property="applyList" ofType="com.cl.clserverSystem.entity.Apply">
+            <id property="apply_id" column="apply_id"></id>
+            <result property="origin_place" column="origin_place"></result>
+            <result property="target_place" column="target_place"></result>
+            <result property="start_time" column="start_time"></result>
+            <result property="end_time" column="end_time"></result>
+            <result property="reason" column="reason"></result>
+            <result property="pre_fee" column="pre_fee"></result>
+            <result property="reject_reason" column="reject_reason"></result>
+            <result property="situation" column="situation"></result>
+            <result property="type" column="type"></result>
+            <result property="manager_id" column="manager_id"></result>
+            <result property="apply_time" column="apply_time"></result>
+        </collection>
+    </resultMap>
+    <select id="ApplyUadited" resultMap="applyss">
+        select user.user_id,apply.*
+        from user
+                 left join ua on user.user_id = ua.user_id
+                 left join apply on ua.apply_id = apply.apply_id
+        where user.user_id = #{id} and apply.situation = #{situation};
+    </select>
+<!--    List<Apply> tripStart(Date date);-->
+    <resultMap id="applysy" type="com.cl.clserverSystem.entity.User">
+        <id property="user_id" column="user_id"></id>
+        <collection property="applyList" ofType="com.cl.clserverSystem.entity.Apply">
+            <id property="apply_id" column="apply_id"></id>
+            <result property="origin_place" column="origin_place"></result>
+            <result property="target_place" column="target_place"></result>
+            <result property="start_time" column="start_time"></result>
+            <result property="end_time" column="end_time"></result>
+            <result property="reason" column="reason"></result>
+            <result property="pre_fee" column="pre_fee"></result>
+            <result property="reject_reason" column="reject_reason"></result>
+            <result property="situation" column="situation"></result>
+            <result property="type" column="type"></result>
+            <result property="manager_id" column="manager_id"></result>
+            <result property="apply_time" column="apply_time"></result>
+        </collection>
+    </resultMap>
+    <select id="tripStart" resultMap="applysy">
+        select user.user_id,apply.*
+        from user
+                 left join ua on user.user_id = ua.user_id
+                 left join apply on ua.apply_id = apply.apply_id
+        where user.user_id = #{id} and #{date} between start_time  and end_time
+    </select>
+    <!--no-->
+    <resultMap id="applysd" type="com.cl.clserverSystem.entity.User">
+        <id property="user_id" column="user_id"></id>
+        <collection property="applyList" ofType="com.cl.clserverSystem.entity.Apply">
+            <id property="apply_id" column="apply_id"></id>
+            <result property="origin_place" column="origin_place"></result>
+            <result property="target_place" column="target_place"></result>
+            <result property="start_time" column="start_time"></result>
+            <result property="end_time" column="end_time"></result>
+            <result property="reason" column="reason"></result>
+            <result property="pre_fee" column="pre_fee"></result>
+            <result property="reject_reason" column="reject_reason"></result>
+            <result property="situation" column="situation"></result>
+            <result property="type" column="type"></result>
+            <result property="manager_id" column="manager_id"></result>
+            <result property="apply_time" column="apply_time"></result>
+        </collection>
+    </resultMap>
+    <select id="NotripStart" resultMap="applysd">
+        select user.user_id,apply.*
+        from user
+                 left join ua on user.user_id = ua.user_id
+                 left join apply on ua.apply_id = apply.apply_id
+        where user.user_id = #{id} and start_time > #{date}
+    </select>
+
+</mapper>
+
+
+<!--        &#45;&#45;           and DATE(start_time) = #{start_time}-->
+<!--        &#45;&#45;           and DATE(end_time) = #{end_time}-->

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.cl.clserverSystem.mapper.UserMapper">
+    <insert id="register" parameterType="com.cl.clserverSystem.entity.User">
+        insert into user(username, email, password)
+        values (#{username}, #{email}, #{password});
+    </insert>
+
+    <!--用于更新用户信息-->
+    <update id="update" parameterType="com.cl.clserverSystem.entity.User">
+        update user
+        set username=#{username},
+            email=#{email}
+        where user_id = #{user_id};
+    </update>
+
+    <!--用于设置权限-->
+    <update id="setAuthority" parameterType="com.cl.clserverSystem.entity.User">
+        update user
+        set authority=#{authority}
+        where user_id = #{user_id}
+    </update>
+
+    <update id="IntegrarChange">
+        update user
+        set integral=integral-#{number}
+        where user_id=#{id}
+    </update>
+
+    <update id="updateIntegral">
+        update user
+        set integral=integral+#{addnumber}
+        where user_id=#{userId}
+    </update>
+
+    <select id="selectByusername" resultType="com.cl.clserverSystem.entity.User">
+        select *
+        from user
+        where username = #{username};
+    </select>
+
+    <select id="findAll" resultType="com.cl.clserverSystem.entity.User">
+        select *
+        from user;
+    </select>
+
+    <select id="SearchManager" resultType="com.cl.clserverSystem.entity.User">
+        select *
+        from user
+        where authority = '1';
+    </select>
+
+    <select id="SearchFinancing" resultType="com.cl.clserverSystem.entity.User">
+        select *
+        from user
+        where authority='1';
+    </select>
+
+    <select id="searchByUseid" resultType="com.cl.clserverSystem.entity.User">
+        select *
+        from user
+        where user_id = #{id}
+    </select>
+
+    <select id="searchByApplyid" resultType="java.lang.Integer">
+        select user_id
+        from ua
+        where apply_id=#{id}
+    </select>
+
+    <select id="searchByEmail" resultType="com.cl.clserverSystem.entity.User">
+        select *
+        from user
+        where email=#{tos}
+    </select>
+
+</mapper>

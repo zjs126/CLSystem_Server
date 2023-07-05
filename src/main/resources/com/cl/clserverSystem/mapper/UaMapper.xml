@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.cl.clserverSystem.mapper.UaMapper">
+    <insert id="add" parameterType="com.cl.clserverSystem.entity.Ua">
+        insert into  ua(user_id,apply_id) values (#{user_id},#{apply_id});
+    </insert>
+    <delete id="delete">
+        delete from ua
+                where apply_id = #{id}
+    </delete>
+    <select id="selectbyApplyId" resultType="java.lang.Integer">
+        select user_id where apply_id = #{applyid}
+    </select>
+</mapper>
