@@ -11,19 +11,20 @@ import com.cl.clserverSystem.utils.JwtUtil;
 import com.cl.clserverSystem.utils.RedisCache;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.net.URL;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Base64;
 import java.util.HashMap;
-import java.io.ByteArrayOutputStream;
 
 @RestController
 public class FaceRecognition {
@@ -36,6 +37,7 @@ public class FaceRecognition {
 
     @Autowired
     private RedisCache redisCache;
+
     /**
      * 注册人脸
      *
@@ -46,27 +48,25 @@ public class FaceRecognition {
      */
     @RequestMapping(value = "face/register", method = RequestMethod.POST)
     public ResponseResult register(String userName, String imageUrl) throws IOException {
+        System.out.println(userName);
+        System.out.println(imageUrl);
         if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(imageUrl)) {
-            System.out.println(userName);
-            System.out.println(imageUrl);
             return ResponseResult.errorResult(AppHttpCodeEnum.Invalid_Param);
         }
-
-        try {
-            // 检查用户名是否已存在
-            User existingUser = userService.searchByUsername(userName);
-            if (existingUser == null) {
-                return ResponseResult.errorResult(AppHttpCodeEnum.Invalid_User);
-            }
-
-            // 向百度云人脸库注册人脸
-            String faceBase = downloadImage(imageUrl);
-            registerFace(aipFace, faceBase, userName);
-
-            return ResponseResult.okResult();
-        } catch (Exception e) {
-            return ResponseResult.errorResult(AppHttpCodeEnum.Internal_Error);
+        // 检查用户名是否已存在
+        User existingUser = userService.searchByUsername(userName);
+        if (existingUser == null) {
+            return ResponseResult.errorResult(AppHttpCodeEnum.Invalid_User);
         }
+
+        System.out.println("1");
+        // 向百度云人脸库注册人脸
+        String faceBase = downloadImage(imageUrl);
+        System.out.println("1");
+        registerFace(aipFace, faceBase, userName);
+
+        return ResponseResult.okResult();
+
     }
 
     /**
@@ -83,21 +83,21 @@ public class FaceRecognition {
 
         try {
             // 进行人像数据对比
-            String  username= verifyUser(imageUrl, aipFace);
+            String username = verifyUser(imageUrl, aipFace);
             System.out.println(username);
-            if(username=="失败"){
+            if (username == "失败") {
                 return ResponseResult.errorResult(AppHttpCodeEnum.Invalid_User);
             }
-            LoginUser loginUser=new LoginUser(userService.searchByUsername(username));
+            LoginUser loginUser = new LoginUser(userService.searchByUsername(username));
             System.out.println(loginUser.getUser());
             String id = Integer.toString(loginUser.getUser().getUser_id());
-            String authority=Integer.toString(loginUser.getUser().getAuthority());
-            String jwt= JwtUtil.createJWT(id,authority);
-            redisCache.setCacheObject("login:"+id,loginUser);
-            HashMap<String,String> map = new HashMap<>();
-            map.put("token",jwt);
-            map.put("authorithy",authority);
-            return new ResponseResult(200,"登陆成功",map);
+            String authority = Integer.toString(loginUser.getUser().getAuthority());
+            String jwt = JwtUtil.createJWT(id, authority);
+            redisCache.setCacheObject("login:" + id, loginUser);
+            HashMap<String, String> map = new HashMap<>();
+            map.put("token", jwt);
+            map.put("authorithy", authority);
+            return new ResponseResult(200, "登陆成功", map);
         } catch (Exception e) {
             return ResponseResult.errorResult(AppHttpCodeEnum.Internal_Error);
         }
@@ -129,9 +129,9 @@ public class FaceRecognition {
     /**
      * 注册人脸
      *
-     * @param client    AipFace对象
-     * @param faceBase  人脸的Base64编码
-     * @param username  用户名
+     * @param client   AipFace对象
+     * @param faceBase 人脸的Base64编码
+     * @param username 用户名
      * @return 注册是否成功
      */
     public boolean registerFace(AipFace client, String faceBase, String username) {
@@ -149,13 +149,21 @@ public class FaceRecognition {
      * @return Base64编码的图像字符串
      * @throws IOException
      */
+
     private String downloadImage(String imageUrl) throws IOException {
         URL url = new URL(imageUrl);
-        BufferedImage image = ImageIO.read(url);
+        InputStream inputStream = url.openStream();
+
+        ImageInputStream imageInputStream = ImageIO.createImageInputStream(inputStream);
+        ImageReader reader = ImageIO.getImageReadersByMIMEType("image/webp").next();
+        reader.setInput(imageInputStream);
+        BufferedImage image = reader.read(0);
+
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ImageIO.write(image, "png", outputStream);
         byte[] imageBytes = outputStream.toByteArray();
         String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+
         return base64Image;
     }
 }
